@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://thymeleaf.org">
+  <head>
+    <title>Please Create Your Profile</title>
+  </head>
+  <body>
+    <h1>Create Your Customer Profile</h1>
+    
+    <form method="post" action="" th:object="${customer}">
+      First name: <input type="text" th:field="*{firstName}" /><br/>
+      Last name: <input type="text" th:field="*{lastName}" /><br/>
+      Email address: <input type="email" th:field="*{emailAddress}" /><br/>
+      <button>Create Customer</button>
+    </form>
+  </body>
+</html>
