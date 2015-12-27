@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://thymeleaf.org">
+  <head>
+    <title>Please Login</title>
+  </head>
+  <body>
+     <form action="" method="post">
+        <fieldset>
+            <legend>Please Login</legend>
+            <!-- use param.error assuming FormLoginConfigurer#failureUrl contains the query parameter error -->
+            <div th:if="${param.error != null}">
+                <div>
+                    Failed to login.
+                    <div th:if="${SPRING_SECURITY_LAST_EXCEPTION != null}">
+                      Reason: <span th:text="${SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
+                    </div>
+                </div>
+            </div>
+            <!-- the configured LogoutConfigurer#logoutSuccessUrl is /login?logout and contains the query param logout -->
+            <div th:if="${param.logout != null}">
+                <div>
+                    You have been logged out.
+                </div>
+            </div>
+            <p>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"/>
+            </p>
+            <p>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"/>
+            </p>
+            <div>
+                <button type="submit" class="btn">Log in</button>
+                <a href="/customers">Create an Account</a>
+            </div>
+        </fieldset>
+     </form>
+  </body>
+</html>

@@ -17,7 +17,22 @@ public class Customer
   private String firstName;
   private String lastName;
   private String emailAddress;
+  private String password;
+  private Set<Authorities> authorities = new HashSet<>();
   private Set<Order> orders = new HashSet<>();
+  
+  public Customer () {}
+  
+  public Customer(Customer customer)
+  {
+    this.id = customer.getId();
+    this.firstName = customer.getFirstName();
+    this.lastName = customer.getLastName();
+    this.emailAddress = customer.getEmailAddress();
+    this.password = customer.getPassword();
+    this.authorities = customer.getAuthorities();
+    this.orders = customer.getOrders();
+  }
   
   @Id
   @GeneratedValue
@@ -62,5 +77,24 @@ public class Customer
   public void setOrders(Set<Order> orders)
   {
     this.orders = orders;
+  }
+  
+  public String getPassword()
+  {
+    return password;
+  }
+  public void setPassword(String password)
+  {
+    this.password = password;
+  }
+  
+  @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, mappedBy="customer")
+  public Set<Authorities> getAuthorities()
+  {
+    return authorities;
+  }
+  public void setAuthorities(Set<Authorities> authorities)
+  {
+    this.authorities = authorities;
   }
 }
