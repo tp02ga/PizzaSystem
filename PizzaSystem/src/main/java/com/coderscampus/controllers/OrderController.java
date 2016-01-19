@@ -1,5 +1,7 @@
 package com.coderscampus.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,17 @@ public class OrderController
   @RequestMapping(value="", method=RequestMethod.GET)
   public String orderGet (ModelMap model)
   {
-    Order order = new Order();
+    List<Order> orders = orderRepo.findAll();
     
-    model.put("order", order);
+    model.put("orders", orders);
     
     return "orders";
   }
   
-  @RequestMapping(value="{orderId}", method=RequestMethod.GET)
+  @RequestMapping(value="/{orderId}", method=RequestMethod.GET)
   public String orderGet (@PathVariable Long orderId, ModelMap model)
   {
+    System.out.println("inside of orderGet");
     Order order = orderRepo.findOne(orderId);
     
     model.put("order", order);
@@ -40,12 +43,26 @@ public class OrderController
     return "orders";
   }
   
-  @RequestMapping(value="{orderId}", method=RequestMethod.POST)
-  public String orderPost (@PathVariable Long orderId, HttpServletRequest request, @ModelAttribute Order order, ModelMap model)
+  @RequestMapping(value="/{orderId}", method=RequestMethod.POST)
+  public String orderPost (@PathVariable Long orderId, @ModelAttribute Order order, ModelMap model)
   {
     return "redirect:/orders/"+orderId+"/pizzas";
   }
   
+  
+  @RequestMapping(value="/{orderId}/completeOrder", method=RequestMethod.POST)
+  public String submitOrder (@PathVariable Long orderId, ModelMap model)
+  {
+    Order order = orderRepo.findOne(orderId);
+    
+    order.setCompleted(true);
+    
+    orderRepo.save(order);
+    
+    // do more stuff with respect to submitting order
+    
+    return "redirect:/orders";
+  }
   @RequestMapping(value="", method=RequestMethod.POST)
   public String orderPost (HttpServletRequest request, @ModelAttribute Order order, ModelMap model)
   {

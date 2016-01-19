@@ -6,19 +6,48 @@
   <body>
     <h1>Create Your Order</h1>
     
-    <div th:each="pizza : ${order.pizzas}">
-      <fieldset>
-        <legend th:text="${'Pizza #' + {pizza.id}}"></legend>
-        Size: <span th:text="${pizza.size}"></span><br/>
-        Crust: <span th:text="${pizza.crustType}"></span><br/>
-        Toppings: <span th:each="topping, status : ${pizza.toppings}" th:text="${status.last ? topping.description : topping.description + ', '}"></span>
-      </fieldset>
-      <!-- Toppings: Bacon, Pepperoni, Sausage  -->
+    <!-- We are viewing all the orders via the '/orders' view -->
+    <div th:each="order : ${orders}">
+      <a style="font-size: 1.17em; font-weight: bold; display: block; margin: 1em 0em;" th:if="${order.completed == null || order.completed == false}" th:href="${'/orders/' + {order.id}}" th:text="${'Order id: ' + {order.id}}"></a>
+      <h3 th:if="${order.completed == true}" th:text="${'Order Id: ' + {order.id}}"></h3>
+      <div th:each="pizza : ${order.pizzas}">
+        <fieldset>
+          <legend th:text="${'Pizza #' + {pizza.id}}"></legend>
+          Size: <span th:text="${pizza.size}"></span><br/>
+          Crust: <span th:text="${pizza.crustType}"></span><br/>
+          Toppings: <span th:each="topping, status : ${pizza.toppings}" th:text="${status.last ? topping.description : topping.description + ', '}"></span>
+        </fieldset>
+        <!-- Toppings: Bacon, Pepperoni, Sausage  -->
+      </div>
+      <hr/>
     </div>
     
-    <form action="" method="post">
-      <button>Add Pizza to Order</button>
-    </form>
+    <!-- We are viewing an individual order via the '/orders/{orderId}' view -->
+    <div th:if="${order != null}">
+      <div th:each="pizza : ${order.pizzas}">
+        <fieldset>
+          <legend th:text="${'Pizza #' + {pizza.id}}"></legend>
+          Size: <span th:text="${pizza.size}"></span><br/>
+          Crust: <span th:text="${pizza.crustType}"></span><br/>
+          Toppings: <span th:each="topping, status : ${pizza.toppings}" th:text="${status.last ? topping.description : topping.description + ', '}"></span>
+        </fieldset>
+        <!-- Toppings: Bacon, Pepperoni, Sausage  -->
+      </div>
+    </div>
+    
+    <div th:if="${order != null}">
+      <form th:action="${'/orders/' + {order.id}}" method="post">
+        <button>Add Pizza to Order</button>
+      </form>
+      <form th:action="${'/orders/' + {order.id} + '/completeOrder'}" method="post">
+        <button>Submit Order</button>
+      </form>
+    </div>
+    <div th:if="${orders != null}">
+      <form action="" method="post">
+        <button>Create new Order</button>
+      </form>
+    </div>
     
     <form action="/logout" method="post">
       <button>Logout</button>

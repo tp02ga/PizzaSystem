@@ -20,6 +20,7 @@ public class Order
   private Customer customer;
   private Set<Pizza> pizzas = new TreeSet<>();
   private Double finalPrice;
+  private Boolean completed;
   
   @Id
   @GeneratedValue
@@ -58,5 +59,13 @@ public class Order
   public void setFinalPrice(Double finalPrice)
   {
     this.finalPrice = finalPrice;
+  }
+  public Boolean getCompleted()
+  {
+    return completed;
+  }
+  public void setCompleted(Boolean completed)
+  {
+    this.completed = completed;
   }
 }
