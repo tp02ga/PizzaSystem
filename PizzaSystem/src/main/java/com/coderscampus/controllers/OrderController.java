@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.coderscampus.domain.Customer;
 import com.coderscampus.domain.Order;
+import com.coderscampus.domain.Pizza;
 import com.coderscampus.repository.OrderRepository;
 
 @Controller
@@ -35,12 +36,28 @@ public class OrderController
   @RequestMapping(value="/{orderId}", method=RequestMethod.GET)
   public String orderGet (@PathVariable Long orderId, ModelMap model)
   {
-    System.out.println("inside of orderGet");
     Order order = orderRepo.findOne(orderId);
+    
+    calculateOrderFinalPrice(order);
     
     model.put("order", order);
     
     return "orders";
+  }
+
+  private void calculateOrderFinalPrice(Order order)
+  {
+    double finalPrice = 0.0;
+    
+    for (Pizza pizza : order.getPizzas())
+    {
+      if (pizza.getPrice() != null)
+      {
+        finalPrice += pizza.getPrice();
+      }
+    }
+    
+    order.setFinalPrice(finalPrice);
   }
   
   @RequestMapping(value="/{orderId}", method=RequestMethod.POST)
@@ -49,6 +66,17 @@ public class OrderController
     return "redirect:/orders/"+orderId+"/pizzas";
   }
   
+  @RequestMapping("/{orderId}/reviewOrder")
+  public String reviewOrder (@PathVariable Long orderId, ModelMap model)
+  {
+    Order order = orderRepo.findOne(orderId);
+    
+    calculateOrderFinalPrice(order);
+    
+    model.put("order",  order);
+    
+    return "reviewOrder";
+  }
   
   @RequestMapping(value="/{orderId}/completeOrder", method=RequestMethod.POST)
   public String submitOrder (@PathVariable Long orderId, ModelMap model)

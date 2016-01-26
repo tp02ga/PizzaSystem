@@ -43,7 +43,7 @@ public class Order
     this.customer = customer;
   }
   
-  @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, mappedBy="order")
+  @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, mappedBy="order", orphanRemoval=true)
   public Set<Pizza> getPizzas()
   {
     return pizzas;

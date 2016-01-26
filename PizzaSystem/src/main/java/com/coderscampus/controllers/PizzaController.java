@@ -14,6 +14,7 @@ import com.coderscampus.domain.Topping;
 import com.coderscampus.enums.PizzaCrustEnum;
 import com.coderscampus.enums.PizzaSizeEnum;
 import com.coderscampus.repository.OrderRepository;
+import com.coderscampus.repository.PizzaRepository;
 import com.coderscampus.repository.ToppingRepository;
 
 @Controller
@@ -22,6 +23,7 @@ public class PizzaController
 {
   private ToppingRepository toppingRepo;
   private OrderRepository orderRepo;
+  private PizzaRepository pizzaRepo;
   
   @RequestMapping(value="", method=RequestMethod.GET)
   public String pizzaGet (@PathVariable Long orderId, ModelMap model)
@@ -37,16 +39,65 @@ public class PizzaController
     return "pizzas";
   }
   
+  @RequestMapping(value="/{pizzaId}/delete", method=RequestMethod.GET)
+  public String pizzaGet (@PathVariable Long orderId, @PathVariable Long pizzaId, ModelMap model)
+  {
+    Order order = orderRepo.findOne(orderId);
+
+    Pizza pizzaToDelete = null;
+    
+    for (Pizza pizza : order.getPizzas())
+    {
+      if (pizza.getId().equals(pizzaId))
+      {
+        pizzaToDelete = pizza;
+        break;
+      }
+    }
+
+    pizzaToDelete.getToppings().clear();
+    
+    order.getPizzas().remove(pizzaToDelete);
+    if (pizzaToDelete != null)
+    {
+      pizzaToDelete.setOrder(null);
+    }
+    
+    orderRepo.save(order);
+    
+    return "redirect:/orders/" + orderId;
+  }
+  
   @RequestMapping(value="", method=RequestMethod.POST)
   public String pizzaPost (@ModelAttribute Pizza pizza, @PathVariable Long orderId, ModelMap model)
   {
     Order order = orderRepo.findOne(orderId);
     
+    double pizzaPrice = 0.0;
+    
     for (Topping topping : pizza.getToppings())
     {
       topping.getPizzas().add(pizza);
+      pizzaPrice += topping.getPrice();
     }
     
+    for (PizzaCrustEnum pizzaCrustEnum : PizzaCrustEnum.values())
+    {
+      if (pizzaCrustEnum.getDescription().equals(pizza.getCrustType()))
+      {
+        pizzaPrice += pizzaCrustEnum.getPrice();
+      }
+    }
+    
+    for (PizzaSizeEnum pizzaSizeEnum : PizzaSizeEnum.values())
+    {
+      if (pizzaSizeEnum.getDescription().equals(pizza.getSize()))
+      {
+        pizzaPrice += pizzaSizeEnum.getPrice();
+      }
+    }
+    
+    pizza.setPrice(pizzaPrice);
     pizza.setOrder(order);
     order.getPizzas().add(pizza);
     
@@ -63,5 +114,10 @@ public class PizzaController
   public void setOrderRepo(OrderRepository orderRepo)
   {
     this.orderRepo = orderRepo;
+  }
+  @Autowired
+  public void setPizzaRepo(PizzaRepository pizzaRepo)
+  {
+    this.pizzaRepo = pizzaRepo;
   }
 }

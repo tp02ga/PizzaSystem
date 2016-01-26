@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://thymeleaf.org">
+  <head>
+    <title>Please Review Your Order</title>
+    <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      $(function () {
+    	$("#back").click(function () {
+          window.location.href = "/orders/[[${order.id}]]";
+    	});
+      });
+      /*]]>*/
+    </script>
+  </head>
+  <body>
+    <h1>Review Your Order</h1>
+    
+    <!-- We are viewing an individual order via the '/orders/{orderId}' view -->
+    <div th:if="${order != null}">
+      <div th:each="pizza : ${order.pizzas}">
+        <fieldset>
+          <legend th:text="${'Pizza #' + {pizza.id}}"></legend>
+          Size: <span th:text="${pizza.size}"></span><br/>
+          Crust: <span th:text="${pizza.crustType}"></span><br/>
+          Toppings: <span th:each="topping, status : ${pizza.toppings}" th:text="${status.last ? topping.description : topping.description + ', '}"></span><br/>
+          ------------<br/>
+          Price: $ <span th:text="${#numbers.formatDecimal(pizza.price, 0, 'COMMA', 2, 'POINT')}"></span>
+        </fieldset>
+        <!-- Toppings: Bacon, Pepperoni, Sausage  -->
+      </div>
+      <br/>
+      <b>Final Price</b>: $ <span th:text="${#numbers.formatDecimal(order.finalPrice, 0, 'COMMA', 2, 'POINT')}"></span>
+      <br/><br/>
+    </div>
+    
+    <button id="back">Change Order</button>
+    <form th:action="${'/orders/' + {order.id} + '/completeOrder'}" method="post">
+      <button>Submit Order</button>
+    </form>
+  </body>
+</html>

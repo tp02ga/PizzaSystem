@@ -18,6 +18,7 @@ public class Pizza implements Comparable<Pizza>
   private String size;
   private String crustType;
   private Order order;
+  private Double price;
   private Set<Topping> toppings = new HashSet<>();
   
   @Id
@@ -67,6 +68,14 @@ public class Pizza implements Comparable<Pizza>
     this.toppings = toppings;
   }
   
+  public Double getPrice()
+  {
+    return price;
+  }
+  public void setPrice(Double price)
+  {
+    this.price = price;
+  }
   
   @Override
   public int hashCode()
